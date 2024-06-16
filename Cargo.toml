@@ -1,0 +1,15 @@
+[package]
+name = "api-practice"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dotenv = "0.15.0"
+serde_json = "1.0.117"
+tokio = { version = "1.38.0", features = ["full"] }
+serde = { version = "1.0.203", features = ["derive"] }
+actix-web = "4.7.0"
+actix-web-validator = "5.0.1"
+validator = "0.16.1"
+chrono = { version = "0.4.38", features = ["serde"] }
+diesel = { version = "2.2.0", features = ["sqlite","chrono"] }
