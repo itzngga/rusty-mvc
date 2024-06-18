@@ -1,7 +1,10 @@
 use crate::entity::user_entity::{UserEntity, UserEntityInsert};
 use crate::exception::app_error::AppError;
 use crate::model::common_model::PaginationResponse;
-use crate::model::user_model::{AddNewUserRequest, GetAllUserData, GetAllUserRequest, GetAllUserResponse, GetUserDetailResponse, UpdateUserRequest};
+use crate::model::user_model::{
+    AddNewUserRequest, GetAllUserData, GetAllUserRequest, GetAllUserResponse,
+    GetUserDetailResponse, UpdateUserRequest,
+};
 use crate::repository::user_repository;
 use crate::utils;
 use actix_web::web::{Json, Query};
@@ -18,7 +21,7 @@ pub async fn get_all_users(
         request.limit_per_page = Some(25);
     }
 
-    let users =  user_repository::get_all_users(&request).await?;
+    let users = user_repository::get_all_users(&request).await?;
 
     let total_page = utils::common::calculate_total_pages(users.1, request.limit_per_page.unwrap());
 
@@ -60,13 +63,13 @@ pub async fn get_all_users(
 }
 
 pub async fn get_user_detail(user_id: i32) -> Result<GetUserDetailResponse, AppError> {
-    if !user_repository::is_valid_user_id(user_id.clone()).await? {
-        return Err(AppError::new(404).message("user id not found".to_owned()))
+    if !user_repository::is_valid_user_id(user_id).await? {
+        return Err(AppError::new(404).message("user id not found".to_owned()));
     }
 
-    let user =  user_repository::get_user_detail(user_id).await?;
-    
-    Ok (GetUserDetailResponse{
+    let user = user_repository::get_user_detail(user_id).await?;
+
+    Ok(GetUserDetailResponse {
         id: user.id,
         username: user.username,
         password: user.password,
@@ -100,8 +103,8 @@ pub async fn add_new_user(request: Json<AddNewUserRequest>) -> Result<(), AppErr
 }
 
 pub async fn update_user(user_id: i32, request: Json<UpdateUserRequest>) -> Result<(), AppError> {
-    if !user_repository::is_valid_user_id(user_id.clone()).await? {
-        return Err(AppError::new(404).message("user id not found".to_owned()))
+    if !user_repository::is_valid_user_id(user_id).await? {
+        return Err(AppError::new(404).message("user id not found".to_owned()));
     }
 
     let user_entity = UserEntity {
@@ -119,8 +122,8 @@ pub async fn update_user(user_id: i32, request: Json<UpdateUserRequest>) -> Resu
 }
 
 pub async fn delete_user(user_id: i32) -> Result<(), AppError> {
-    if !user_repository::is_valid_user_id(user_id.clone()).await? {
-        return Err(AppError::new(404).message("user id not found".to_owned()))
+    if !user_repository::is_valid_user_id(user_id).await? {
+        return Err(AppError::new(404).message("user id not found".to_owned()));
     }
 
     match user_repository::delete_user(user_id).await {

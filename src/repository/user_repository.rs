@@ -35,7 +35,7 @@ pub async fn get_all_users(
     Ok((user_result, count as i32))
 }
 
-pub async  fn get_user_detail(user_id: i32) -> Result<UserEntity, AppError> {
+pub async fn get_user_detail(user_id: i32) -> Result<UserEntity, AppError> {
     let mut conn = new_sqlite_connection();
 
     let user = users::table

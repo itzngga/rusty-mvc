@@ -1,13 +1,16 @@
 use crate::exception::app_error::AppError;
 use crate::model::user_model as model;
 use crate::service::user_service;
-use actix_web::{get, post, put, web, HttpResponse, Responder, delete};
+use actix_web::{web, HttpResponse, Responder};
 
 pub fn setup_routes(app: &mut web::ServiceConfig) {
-    app.service((get_all_users, get_user_detail, add_new_user, update_user, delete_user));
+    app.route("/users", web::get().to(get_all_users));
+    app.route("/users/{user_id}", web::get().to(get_user_detail));
+    app.route("/users", web::post().to(add_new_user));
+    app.route("/users/{user_id}", web::put().to(update_user));
+    app.route("/users/{user_id}", web::delete().to(delete_user));
 }
 
-#[get("/users")]
 pub async fn get_all_users(
     request: web::Query<model::GetAllUserRequest>,
 ) -> Result<impl Responder, AppError> {
@@ -19,7 +22,6 @@ pub async fn get_all_users(
     }
 }
 
-#[post("/users")]
 pub async fn add_new_user(
     request: web::Json<model::AddNewUserRequest>,
 ) -> Result<impl Responder, AppError> {
@@ -30,10 +32,7 @@ pub async fn add_new_user(
         Err(e) => Err(e),
     }
 }
-#[get("/users/{user_id}")]
-pub async fn get_user_detail(
-    user_id: web::Path<i32>,
-) -> Result<impl Responder, AppError> {
+pub async fn get_user_detail(user_id: web::Path<i32>) -> Result<impl Responder, AppError> {
     let result = user_service::get_user_detail(*user_id).await;
 
     match result {
@@ -42,7 +41,6 @@ pub async fn get_user_detail(
     }
 }
 
-#[put("/users/{user_id}")]
 pub async fn update_user(
     user_id: web::Path<i32>,
     request: web::Json<model::UpdateUserRequest>,
@@ -55,10 +53,7 @@ pub async fn update_user(
     }
 }
 
-#[delete("/users/{user_id}")]
-pub async fn delete_user(
-    user_id: web::Path<i32>,
-) -> Result<impl Responder, AppError> {
+pub async fn delete_user(user_id: web::Path<i32>) -> Result<impl Responder, AppError> {
     let result = user_service::delete_user(*user_id).await;
 
     match result {
